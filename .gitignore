@@ -1,0 +1,53 @@
+# OS files
+.DS_Store
+
+# Environment files
+.env
+.env.*
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+.python-version
+.Python
+
+# Build and packaging artifacts
+build/
+dist/
+wheels/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# Tests and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Type checkers and linters
+.mypy_cache/
+.pytype/
+.ruff_cache/
+
+# C extensions
+*.so
+
+# Tool caches
+.cache/
+.tox/
+.nox/
+.pyre/
+.hypothesis/
+
+# IDE/editor
+.vscode/
+.idea/

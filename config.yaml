@@ -1,0 +1,7 @@
+defaults:
+  workers: 0
+  overwrite: false
+  glob: "*.md"
+paths:
+  input_root: "input"
+  output_root: "output"
