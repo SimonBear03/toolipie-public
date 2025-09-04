@@ -1,14 +1,20 @@
  # Toolipie
 
-Personal CLI toolbox for building and running your own mini-tools. 
+Personal, extensible Python CLI platform to centralize your small “one‑off” scripts as reusable tools. Stop rewriting throwaway code — keep simple, personal utilities in one place with a consistent CLI.
 
-Currently ships with four tools:
+Currently ships with four tools (more coming):
 - [md-to-docx](src/toolipie/tools/md_to_docx/README.md)
 - [md-to-pdf](src/toolipie/tools/md_to_pdf/README.md)
 - [pdf-to-png](src/toolipie/tools/pdf_to_png/README.md)
 - [png-prep-ocr](src/toolipie/tools/png_prep_ocr/README.md)
 
 Build your own tool → see [Add your own tool](#add-your-own-tool-quick-guide).
+
+**Tool Request** — Have a tool idea? Open an issue with the `tool request` label, and plz include:
+- Problem statement
+- Example input/output
+- Expected options
+- Dependencies 
 
 ## Vision
 
