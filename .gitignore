@@ -51,3 +51,7 @@ htmlcov/
 # IDE/editor
 .vscode/
 .idea/
+
+# Project data (keep current tracked samples; ignore new files)
+input/
+output/

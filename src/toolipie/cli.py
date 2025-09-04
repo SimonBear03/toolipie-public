@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 import typer
+from . import __version__
 
 from .core import build_context
 from .tools.md_to_docx import run as md_to_docx_tool
@@ -13,6 +14,24 @@ from .tools.png_prep_ocr import run as png_prep_ocr_tool
 app = typer.Typer(
     help="Toolipie — personal CLI toolbox", no_args_is_help=True, add_completion=False
 )
+
+def _version_callback(value: bool) -> None:
+    if value:
+        print(__version__)
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        help="Show Toolipie platform version and exit",
+        is_eager=True,
+        callback=_version_callback,
+    )
+):
+    """Toolipie root command."""
 
 
 @app.command("md-to-docx")

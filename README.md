@@ -1,6 +1,20 @@
  # Toolipie
 
-Personal CLI toolbox — supports Markdown to DOCX/PDF and PDF-to-PNG rasterization.
+Personal CLI toolbox for building and running your own mini-tools. 
+
+Currently ships with four tools:
+- [md-to-docx](src/toolipie/tools/md_to_docx/README.md)
+- [md-to-pdf](src/toolipie/tools/md_to_pdf/README.md)
+- [pdf-to-png](src/toolipie/tools/pdf_to_png/README.md)
+- [png-prep-ocr](src/toolipie/tools/png_prep_ocr/README.md)
+
+Build your own tool → see [Add your own tool](#add-your-own-tool-quick-guide).
+
+## Vision
+
+- Build-your-own: add small focused tools under `src/toolipie/tools/<tool>/` and expose them via the CLI. More first‑party tools will be added over time.
+- Plugin platform: planned auto‑discovery and per‑tool specs for zero‑boilerplate command registration. See [`PLUGIN_PLATFORM_PLAN.md`](PLUGIN_PLATFORM_PLAN.md).
+- AI assistance (future): an AI layer to guide tool creation (scaffold code, configure options, and generate docs) similar to how Cursor assists this repo today.
 
 ## Install
 
@@ -75,9 +89,8 @@ See `CONTRIBUTING.md` for a fuller quickstart.
 - Each tool ships a focused README under `src/toolipie/tools/<tool>/README.md`.
 - See `CONTRIBUTING.md` for adding new tools.
 
-## Available tools
+## Versioning
 
-- md-to-docx: `src/toolipie/tools/md_to_docx/README.md`
-- md-to-pdf:  `src/toolipie/tools/md_to_pdf/README.md`
-- pdf-to-png: `src/toolipie/tools/pdf_to_png/README.md`
-- png-prep-ocr: `src/toolipie/tools/png_prep_ocr/README.md`
+- Platform (core) uses Semantic Versioning (MAJOR.MINOR.PATCH). Only core/platform changes bump the version and get a `vX.Y.Z` git tag and GitHub Release. See `CHANGELOG.md`.
+- Tools can evolve independently without bumping the platform version. Tool-only updates may be mentioned under “Unreleased” but do not create a new platform release.
+- Programmatic version: `toolipie --version` prints the platform version. Internal `PLATFORM_API_VERSION` signals plugin interface compatibility.
