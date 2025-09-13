@@ -81,6 +81,10 @@ Toolipie treats tools in two categories, both managed inside the repo:
 
 Discovery is index‑driven and unified using a single index file at `.toolipie/index.json`. The `scan` command indexes both core tools and repo plugins. The tool manifest (`tool.yaml`) is identical for both; “core vs plugin” is tracked only in index metadata (`source: core|plugin`, `rel_path`). No `~/.toolipie` is used.
 
+Guidance (when to choose which):
+- Start new tools as plugins; promote to core when stable, broadly useful, and lightweight.
+- See `AGENTS.md` and `CONTRIBUTING.md` for detailed guidance and plugin packaging/install steps.
+
 Common workflows:
 
 - Add/remove a core tool:

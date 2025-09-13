@@ -95,6 +95,23 @@ Where plugins live:
 Uninstall:
 - `toolipie uninstall <tool-key>` removes the plugin folder from `src/toolipie/plugins/` and rebuilds the index.
 
+## Choosing Core vs Plugin for new tools
+
+- Prefer starting as a plugin under `src/toolipie/plugins/<tool>/` when:
+  - The tool is optional, domain‑specific, or experimental
+  - It has heavy or rapidly changing dependencies
+  - You want easy distribution as a `.zip` and independent iteration
+
+- Consider core under `src/toolipie/tools/<tool>/` when:
+  - The tool is broadly useful and stable
+  - Dependencies are lightweight
+  - It meaningfully showcases the platform for most users
+
+- Promotion flow:
+  - Move plugin → core folder; keep the `name` in `tool.yaml`, update `entry` if needed
+  - Run `toolipie scan`, update README/tool docs
+  - Do not bump platform version for tool‑only changes; platform releases track core changes
+
 ## Context and config utilities
 Use core helpers from `src/toolipie/core.py`:
 - `build_context(task_name, input, output, glob, overwrite, workers)` to construct a Context with resolved defaults and file list.

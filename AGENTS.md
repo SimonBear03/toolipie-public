@@ -78,3 +78,27 @@ When platform behavior changes, review and update these records in the repo:
 - The in-repo folder `src/toolipie/plugins/` holds plugin-style tools, whether shipped or installed.
 - `toolipie scan` indexes both `src/toolipie/tools/` and `src/toolipie/plugins/` into a single repo index at `.toolipie/index.json`. Entries carry `source: core|plugin` and a `rel_path` relative to their root.
 - `toolipie install <zip>` extracts into `src/toolipie/plugins/<tool>/` and updates `.toolipie/index.json`. `toolipie uninstall <tool>` removes the folder and rescans. No `~/.toolipie` is used.
+
+## Core vs Plugin Tools — When to choose which
+
+- Core (`src/toolipie/tools/<tool>/`):
+  - Broadly useful across projects; good “batteries included” defaults
+  - Stable interface; lightweight, minimal dependencies
+  - Appropriate to ship with the platform and be documented in README
+
+- Plugin (`src/toolipie/plugins/<tool>/`):
+  - Optional, domain‑specific, or experimental features
+  - Heavy/volatile dependencies, or fast iteration cadence
+  - Prefer separate distribution via `.zip`; easy install/uninstall
+
+- Practical rule:
+  - Start new tools as plugins; promote to core when they’re stable, broadly useful, and lightweight.
+
+- Promotion path (plugin → core):
+  - Move the folder from `plugins/` to `tools/`
+  - Keep the `name` in `tool.yaml`; adjust `entry` if needed
+  - Run `toolipie scan`, update docs, and consider packaging a compatibility plugin if needed
+
+- Versioning policy:
+  - Platform uses SemVer; platform changes bump `__version__`
+  - Tool‑only updates (core or plugin) do not bump the platform version
