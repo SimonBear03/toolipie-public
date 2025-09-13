@@ -82,11 +82,14 @@ def _denoise(img: np.ndarray, strength: int) -> np.ndarray:
 
 
 def _rotate(img: np.ndarray, degrees: int) -> np.ndarray:
+    """Rotate image in-place keeping canvas size.
+    Positive degrees mean clockwise (per CLI help), so invert for OpenCV.
+    """
     if not degrees:
         return img
     (h, w) = img.shape[:2]
     center = (w // 2, h // 2)
-    M = cv2.getRotationMatrix2D(center, degrees, 1.0)
+    M = cv2.getRotationMatrix2D(center, -float(degrees), 1.0)
     return cv2.warpAffine(img, M, (w, h), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
 
 
@@ -192,7 +195,8 @@ def _sweep_projection_angle(gray: np.ndarray, search_deg: float = 5.0, step_deg:
         if score > best_score:
             best_score = score
             best_angle = float(ang)
-    return float(-best_angle)
+    # Return CCW rotation to apply (positive = CCW)
+    return float(best_angle)
 
 
 def _estimate_horizontal_shear(gray: np.ndarray) -> float:
@@ -357,8 +361,9 @@ def _process_one(
                             angle_sweep = _sweep_projection_angle(gray)
                             angle_est = angle_sweep
                     if abs(angle_est) <= max_abs_angle:
-                        work = _rotate_bound(work, -angle_est)
-                        angle_applied = -angle_est
+                        # Apply CCW rotation by estimated angle (positive = CCW)
+                        work = _rotate_bound(work, angle_est)
+                        angle_applied = angle_est
                 if rotate:
                     work = _rotate(work, rotate)
 
@@ -577,5 +582,4 @@ def run(
                         advance=1,
                         description=f"{folder} {folder_to_done[folder]}/{folder_to_total[folder]}",
                     )
-
 

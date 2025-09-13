@@ -5,11 +5,15 @@ Preprocess PNG images for Amazon Textract (deskew, grayscale, binarize, denoise,
 ## Usage
 
 ```bash
-toolipie png-prep-ocr \
+# Build/refresh registry
+toolipie scan
+
+# Run
+toolipie run png-prep-ocr \
   --input input/png-prep-ocr \
   --output output/png-prep-ocr \
-  --glob "**/*.png" \
-  --grayscale --deskew --unshear --corner-dewarp --binarize --denoise 0 --rotate 0 --max-size-mb 5
+  --param grayscale=true --param deskew=true --param unshear=true --param corner_dewarp=true \
+  --param binarize=false --param denoise=0 --param rotate=0 --param max_size_mb=5
 ```
 
 - Defaults: deskew=True, unshear=True, grayscale=False, binarize=False, denoise=0, rotate=0.
@@ -41,3 +45,7 @@ output/png-prep-ocr/book2/sectionA/page1.png
 ## Dependencies
 
 - Python: `opencv-python-headless`
+
+## Notes
+
+- If the input folder is missing or contains no files matching the glob, the runner completes without writing outputs and prints: `0 input files identified in '<path>'.`

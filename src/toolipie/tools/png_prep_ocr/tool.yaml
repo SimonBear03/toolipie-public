@@ -1,0 +1,54 @@
+schema_version: 1
+name: png-prep-ocr
+title: PNG Prep for OCR
+summary: Preprocess PNG images (deskew, grayscale, binarize, denoise, rotate, dewarp).
+default_glob: "**/*.png"
+entry: toolipie.tools.png_prep_ocr.run:run
+options:
+  - name: grayscale
+    type: bool
+    default: false
+    help: Convert to grayscale.
+  - name: deskew
+    type: bool
+    default: true
+    help: Auto deskew image content.
+  - name: binarize
+    type: bool
+    default: false
+    help: Apply Otsu binarization.
+  - name: denoise
+    type: int
+    default: 0
+    help: Denoise strength (0 disables).
+  - name: rotate
+    type: int
+    default: 0
+    help: Extra clockwise rotation after deskew (degrees).
+  - name: max_size_mb
+    type: float
+    help: Cap output PNG size in MB (adaptive compression/downscale).
+  - name: method
+    type: str
+    choices: [auto, hough, minrect, sweep]
+    default: auto
+    help: Skew estimation method.
+  - name: max_abs_angle
+    type: float
+    default: 8.0
+    help: Ignore corrections larger than this (degrees).
+  - name: unshear
+    type: bool
+    default: false
+    help: Apply horizontal unshear after rotation.
+  - name: dry_run
+    type: bool
+    default: false
+    help: Estimate transforms without writing files.
+  - name: corner_dewarp
+    type: bool
+    default: false
+    help: Perspective dewarp using detected quadrilateral.
+requires:
+  - opencv-python-headless>=4.10,<5
+

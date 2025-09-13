@@ -4,6 +4,8 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 import os
+from typing import Optional
+from threading import Event as ThreadEvent
 
 import pypandoc
 import yaml
@@ -19,6 +21,7 @@ class Context:
     overwrite: bool
     workers: int
     run_log: Path
+    cancel_event: Optional[ThreadEvent] = None
 
 
 def get_repo_root() -> Path:
@@ -86,13 +89,14 @@ def build_context(
     run_log.touch(exist_ok=True)
     return Context(
         task=task_name,
-        input_dir=start if start.is_dir() else start.parent,
+        input_dir=(start.parent if start.is_file() else start),
         output_dir=output_dir,
         files=files,
         config=cfg,
         overwrite=use_overwrite,
         workers=use_workers,
         run_log=run_log,
+        cancel_event=None,
     )
 
 

@@ -6,26 +6,38 @@ Pandoc binary is auto-downloaded on first use if none is found on your system.
 ## Command
 
 ```bash
-toolipie md-to-docx --help
+# Build/refresh the registry after changes
+toolipie scan
+
+# List tools
+toolipie list
+
+# Run (uses platform input/output defaults unless overridden)
+toolipie run md-to-docx \
+  --input input/md-to-docx \
+  --output output/md-to-docx \
+  --param template=src/toolipie/tools/md_to_docx/assets/presets/word_template.docx
 ```
 
 ## Default I/O
 
 `input/md-to-docx/` → `output/md-to-docx/`
+ 
+Note: If the input folder is missing or contains no matching files, the runner completes without writing outputs and prints: `0 input files identified in '<path>'.`
 
 ## Usage
 
 ```bash
 # Use the built-in reference DOCX template
-toolipie md-to-docx \
+toolipie run md-to-docx \
   --input input/md-to-docx \
   --output output/md-to-docx
 
 # Provide a custom reference DOCX
-toolipie md-to-docx \
+toolipie run md-to-docx \
   --input input/md-to-docx \
   --output output/md-to-docx \
-  --template /path/to/reference.docx
+  --param template=/path/to/reference.docx
 ```
 
 ## Template

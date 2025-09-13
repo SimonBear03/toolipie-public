@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "generated_at": "2025-09-13T01:50:45.105353+00:00",
+  "tools": [
+    {
+      "key": "md-to-docx",
+      "title": "Markdown → DOCX",
+      "summary": "Convert Markdown files to Word DOCX via Pandoc.",
+      "default_glob": "*.md",
+      "entry": "toolipie.tools.md_to_docx.run:run",
+      "options": [
+        {
+          "name": "template",
+          "type": "path",
+          "help": "Path to a reference DOCX template."
+        }
+      ],
+      "requires": [
+        "pypandoc>=1,<2"
+      ],
+      "source": "core",
+      "rel_path": "md_to_docx"
+    },
+    {
+      "key": "md-to-pdf",
+      "title": "Markdown → PDF",
+      "summary": "Convert Markdown to PDF using an HTML/CSS pipeline (WeasyPrint).",
+      "default_glob": "*.md",
+      "entry": "toolipie.tools.md_to_pdf.run:run",
+      "options": [
+        {
+          "name": "preset",
+          "type": "str",
+          "help": "CSS preset name under assets/presets/ (e.g., a4_report)."
+        },
+        {
+          "name": "css",
+          "type": "path",
+          "help": "Path to a CSS file to style the PDF output."
+        }
+      ],
+      "requires": [
+        "markdown-it-py>=3,<5",
+        "weasyprint>=61,<63"
+      ],
+      "source": "core",
+      "rel_path": "md_to_pdf"
+    },
+    {
+      "key": "pdf-to-png",
+      "title": "PDF → PNG",
+      "summary": "Convert PDF pages to PNG images using PDFium.",
+      "default_glob": "*.pdf",
+      "entry": "toolipie.tools.pdf_to_png.run:run",
+      "options": [
+        {
+          "name": "dpi",
+          "type": "int",
+          "default": 300,
+          "help": "Render DPI (dots per inch)."
+        },
+        {
+          "name": "first_page",
+          "type": "int",
+          "help": "First page to render (1-indexed)."
+        },
+        {
+          "name": "last_page",
+          "type": "int",
+          "help": "Last page to render (inclusive)."
+        }
+      ],
+      "requires": [
+        "pypdfium2>=4,<5",
+        "Pillow>=10,<11"
+      ],
+      "source": "core",
+      "rel_path": "pdf_to_png"
+    },
+    {
+      "key": "png-prep-ocr",
+      "title": "PNG Prep for OCR",
+      "summary": "Preprocess PNG images (deskew, grayscale, binarize, denoise, rotate, dewarp).",
+      "default_glob": "**/*.png",
+      "entry": "toolipie.tools.png_prep_ocr.run:run",
+      "options": [
+        {
+          "name": "grayscale",
+          "type": "bool",
+          "default": false,
+          "help": "Convert to grayscale."
+        },
+        {
+          "name": "deskew",
+          "type": "bool",
+          "default": true,
+          "help": "Auto deskew image content."
+        },
+        {
+          "name": "binarize",
+          "type": "bool",
+          "default": false,
+          "help": "Apply Otsu binarization."
+        },
+        {
+          "name": "denoise",
+          "type": "int",
+          "default": 0,
+          "help": "Denoise strength (0 disables)."
+        },
+        {
+          "name": "rotate",
+          "type": "int",
+          "default": 0,
+          "help": "Extra clockwise rotation after deskew (degrees)."
+        },
+        {
+          "name": "max_size_mb",
+          "type": "float",
+          "help": "Cap output PNG size in MB (adaptive compression/downscale)."
+        },
+        {
+          "name": "method",
+          "type": "str",
+          "choices": [
+            "auto",
+            "hough",
+            "minrect",
+            "sweep"
+          ],
+          "default": "auto",
+          "help": "Skew estimation method."
+        },
+        {
+          "name": "max_abs_angle",
+          "type": "float",
+          "default": 8.0,
+          "help": "Ignore corrections larger than this (degrees)."
+        },
+        {
+          "name": "unshear",
+          "type": "bool",
+          "default": false,
+          "help": "Apply horizontal unshear after rotation."
+        },
+        {
+          "name": "dry_run",
+          "type": "bool",
+          "default": false,
+          "help": "Estimate transforms without writing files."
+        },
+        {
+          "name": "corner_dewarp",
+          "type": "bool",
+          "default": false,
+          "help": "Perspective dewarp using detected quadrilateral."
+        }
+      ],
+      "requires": [
+        "opencv-python-headless>=4.10,<5"
+      ],
+      "source": "core",
+      "rel_path": "png_prep_ocr"
+    },
+    {
+      "key": "pdf-to-png-plugin",
+      "title": "PDF → PNG (Plugin)",
+      "summary": "Convert PDF pages to PNG images using PDFium (packaged as a plugin).",
+      "default_glob": "*.pdf",
+      "entry": "run.py:run",
+      "options": [
+        {
+          "name": "dpi",
+          "type": "int",
+          "default": 300,
+          "help": "Render DPI (dots per inch)."
+        },
+        {
+          "name": "first_page",
+          "type": "int",
+          "help": "First page to render (1-indexed)."
+        },
+        {
+          "name": "last_page",
+          "type": "int",
+          "help": "Last page to render (inclusive)."
+        }
+      ],
+      "requires": [
+        "pypdfium2>=4,<5",
+        "Pillow>=10,<11"
+      ],
+      "source": "plugin",
+      "rel_path": "pdf-to-png-plugin"
+    }
+  ]
+}

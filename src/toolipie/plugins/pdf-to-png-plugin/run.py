@@ -6,8 +6,7 @@ from rich.progress import BarColumn, Progress, TextColumn, TimeElapsedColumn
 import concurrent.futures
 import os
 
-from ...core import Context, append_run_log
-from ...utils.timeit import timeit
+from toolipie.core import Context, append_run_log
 
 
 def _render_one_page(
@@ -19,14 +18,10 @@ def _render_one_page(
         int,  # page_number (1-indexed for filename)
         int,  # dpi
         bool, # overwrite
-        object | None, # cancel_event (threading.Event)
     ]
 ) -> tuple[str, int, bool, Optional[str]]:
-    pdf_path, output_dir, base_name, zero_based_index, page_number, dpi, overwrite, cancel_event = args
+    pdf_path, output_dir, base_name, zero_based_index, page_number, dpi, overwrite = args
     try:
-        # Best-effort cancel check before heavy work
-        if getattr(cancel_event, "is_set", lambda: False)():
-            return base_name, page_number, False, None
         try:
             import pypdfium2 as pdfium  # Lazy import to avoid loading at CLI startup
         except Exception as ie:
@@ -35,8 +30,6 @@ def _render_one_page(
         page = pdf_doc[zero_based_index]
         scale = (dpi or 300) / 72.0
         pil_image = page.render(scale=scale).to_pil()
-        if getattr(cancel_event, "is_set", lambda: False)():
-            return base_name, page_number, False, None
         out_dir_path = Path(output_dir)
         out_dir_path.mkdir(parents=True, exist_ok=True)
         out_path = out_dir_path / f"{base_name}_p{page_number:04d}.png"
@@ -133,7 +126,6 @@ def run(
                         page_number,
                         int(dpi or 300),
                         bool(ctx.overwrite),
-                        getattr(ctx, "cancel_event", None),
                     )
                 )
                 total_pages_all += 1
@@ -145,9 +137,6 @@ def run(
         with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as ex:
             futures = [ex.submit(_render_one_page, t) for t in tasks]
             for fut in concurrent.futures.as_completed(futures):
-                # Early-exit if cancelled: drain remaining futures quietly
-                if getattr(ctx, "cancel_event", None) is not None and ctx.cancel_event.is_set():
-                    break
                 base_name, page_number, wrote, error = fut.result()
                 # Update per-pdf
                 per_pdf_done[base_name] = per_pdf_done.get(base_name, 0) + 1
@@ -163,10 +152,6 @@ def run(
                     advance=1,
                     description=f"TOTAL {overall_done}/{total_pages_all}",
                 )
-            # If cancelled, attempt to cancel pending futures (best‑effort; running threads cannot be force‑killed)
-            if getattr(ctx, "cancel_event", None) is not None and ctx.cancel_event.is_set():
-                for f in futures:
-                    f.cancel()
         # Append one run record per PDF (summary)
         for pdf in ctx.files:
             pdf_path = Path(pdf).resolve()
@@ -181,3 +166,4 @@ def run(
                     "time": 0.0,
                 },
             )
+

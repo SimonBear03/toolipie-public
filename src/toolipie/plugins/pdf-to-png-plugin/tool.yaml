@@ -1,0 +1,20 @@
+schema_version: 1
+name: pdf-to-png-plugin
+title: "PDF \u2192 PNG (Plugin)"
+summary: Convert PDF pages to PNG images using PDFium (packaged as a plugin).
+default_glob: '*.pdf'
+entry: run.py:run
+options:
+- name: dpi
+  type: int
+  default: 300
+  help: Render DPI (dots per inch).
+- name: first_page
+  type: int
+  help: First page to render (1-indexed).
+- name: last_page
+  type: int
+  help: Last page to render (inclusive).
+requires:
+- pypdfium2>=4,<5
+- Pillow>=10,<11

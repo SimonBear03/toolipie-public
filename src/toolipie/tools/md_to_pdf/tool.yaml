@@ -1,0 +1,17 @@
+schema_version: 1
+name: md-to-pdf
+title: Markdown → PDF
+summary: Convert Markdown to PDF using an HTML/CSS pipeline (WeasyPrint).
+default_glob: "*.md"
+entry: toolipie.tools.md_to_pdf.run:run
+options:
+  - name: preset
+    type: str
+    help: CSS preset name under assets/presets/ (e.g., a4_report).
+  - name: css
+    type: path
+    help: Path to a CSS file to style the PDF output.
+requires:
+  - markdown-it-py>=3,<5
+  - weasyprint>=61,<63
+

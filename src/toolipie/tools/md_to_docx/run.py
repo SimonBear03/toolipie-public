@@ -36,6 +36,8 @@ def run(ctx: Context, template: Optional[str] = None) -> None:
             task_ids.append(progress.add_task(f"DOCX {idx}/{total} {md.name}", total=1))
 
         for idx, md in enumerate(ctx.files):
+            if getattr(ctx, "cancel_event", None) is not None and ctx.cancel_event.is_set():
+                break
             out_path = out_dir / (md.stem + ".docx")
             with timeit() as elapsed:
                 try:

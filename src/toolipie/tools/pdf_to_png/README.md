@@ -5,22 +5,26 @@ Convert PDF pages to PNG images.
 ## Usage
 
 ```bash
-toolipie pdf-to-png \
+# Build/refresh registry
+toolipie scan
+
+# Run
+toolipie run pdf-to-png \
   --input input/pdf-to-png \
   --output output/pdf-to-png \
-  --dpi 300
-toolipie pdf-to-png \
+  --param dpi=300
+
+toolipie run pdf-to-png \
   --input input/pdf-to-png \
   --output output/pdf-to-png \
-  --dpi 300 \
+  --param dpi=300 \
   --workers 0  # auto CPU-1
 ```
 
 Flags:
-- `--dpi`: Render DPI (default: 300)
-- `--first-page`, `--last-page`: Page range (1-indexed, inclusive)
-This tool outputs PNG only.
-- Common flags: `--glob` (defaults to `*.pdf`), `--overwrite`, `--workers`
+- `--param dpi=<int>`: Render DPI (default: 300)
+- `--param first_page=<int>`, `--param last_page=<int>`: Page range (1-indexed, inclusive)
+- Common flags: `--glob` (defaults to `*.pdf` via manifest), `--overwrite`, `--workers`
   - Parallelism: `--workers N` sets per-page parallelism; `--workers 0` or omitting uses auto = CPU cores minus one (minimum 1).
 
 Output structure:
@@ -42,4 +46,4 @@ input/pdf-to-png/abc.pdf
 - Input folder: `input/pdf-to-png/`
 - Output folder: `output/pdf-to-png/`
 - Default glob: `*.pdf`
-
+ - If the input folder is missing or contains no matching files, the runner completes without writing outputs and prints: `0 input files identified in '<path>'.`

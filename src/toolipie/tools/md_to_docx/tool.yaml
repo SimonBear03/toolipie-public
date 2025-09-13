@@ -1,0 +1,13 @@
+schema_version: 1
+name: md-to-docx
+title: Markdown → DOCX
+summary: Convert Markdown files to Word DOCX via Pandoc.
+default_glob: "*.md"
+entry: toolipie.tools.md_to_docx.run:run
+options:
+  - name: template
+    type: path
+    help: Path to a reference DOCX template.
+requires:
+  - pypandoc>=1,<2
+

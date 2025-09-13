@@ -7,27 +7,37 @@ Markdown (MarkdownIt) → HTML → PDF (WeasyPrint)
 ## Command
 
 ```bash
-toolipie md-to-pdf --help
+# Build/refresh registry
+toolipie scan
+
+# List tools
+toolipie list
+
+# Run with a preset or custom CSS
+toolipie run md-to-pdf --input input/md-to-pdf --output output/md-to-pdf --param preset=a4_report
+toolipie run md-to-pdf --input input/md-to-pdf --output output/md-to-pdf --param css=/path/to/styles.css
 ```
 
 ## Default I/O
 
 `input/md-to-pdf/` → `output/md-to-pdf/`
 
+Note: If the input folder is missing or contains no matching files, the runner completes without writing outputs and prints: `0 input files identified in '<path>'.`
+
 ## Usage
 
 ```bash
 # Use a built-in CSS preset
-toolipie md-to-pdf \
+toolipie run md-to-pdf \
   --input input/md-to-pdf \
   --output output/md-to-pdf \
-  --preset a4_report
+  --param preset=a4_report
 
 # Use a custom CSS file
-toolipie md-to-pdf \
+toolipie run md-to-pdf \
   --input input/md-to-pdf \
   --output output/md-to-pdf \
-  --css /path/to/styles.css
+  --param css=/path/to/styles.css
 ```
 
 ## Styling

@@ -1,0 +1,21 @@
+schema_version: 1
+name: pdf-to-png
+title: PDF → PNG
+summary: Convert PDF pages to PNG images using PDFium.
+default_glob: "*.pdf"
+entry: toolipie.tools.pdf_to_png.run:run
+options:
+  - name: dpi
+    type: int
+    default: 300
+    help: Render DPI (dots per inch).
+  - name: first_page
+    type: int
+    help: First page to render (1-indexed).
+  - name: last_page
+    type: int
+    help: Last page to render (inclusive).
+requires:
+  - pypdfium2>=4,<5
+  - Pillow>=10,<11
+

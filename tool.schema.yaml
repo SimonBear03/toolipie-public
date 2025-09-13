@@ -1,0 +1,77 @@
+# Toolipie Tool Manifest Schema (schema_version: 1)
+#
+# Purpose: Declarative metadata for a tool folder under src/toolipie/tools/<tool>/
+# - Enables fast discovery without importing Python modules
+# - Drives CLI/TUI/GUI option rendering consistently
+# - Future: dependency checks and install helpers
+#
+# File location (recommended):
+#   src/toolipie/tools/<snake_case>/tool.yaml
+#
+# Naming:
+# - name: kebab-case command name (e.g., "pdf-to-png").
+# - The folder is typically snake_case (e.g., pdf_to_png) and maps 1:1.
+#
+# Types:
+# - option.type: one of [str, int, float, bool, path]
+# - option.choices: optional list of strings (for enums)
+# - option.default: default value; omit if no default
+#
+# Entry:
+# - entry: Python path to the run function. Defaults to
+#          "toolipie.tools.<snake_case>.run:run" when omitted.
+#
+# Input/Output handling:
+# - Tools may include `input` and `output` in `options` with `type: path` to surface them in UIs.
+# - Platform defaults still apply when users do not provide values:
+#     input  = <repo>/<paths.input_root>/<tool_key>
+#     output = <repo>/<paths.output_root>/<tool_key>
+# - CLI users can override via `--input`/`--output` flags; GUIs can pass absolute paths.
+# - Avoid setting manifest defaults for `input`/`output`; let the platform provide them.
+#
+# Minimal example:
+# ---
+# schema_version: 1
+# name: my-tool
+# title: My Tool
+# summary: One-line description shown in UIs.
+# default_glob: "*.ext"
+# entry: toolipie.tools.my_tool.run:run
+# options:
+#   - name: threshold
+#     type: int
+#     default: 3
+#     help: Threshold for filtering
+#   - name: mode
+#     type: str
+#     choices: [fast, best]
+#     default: fast
+# requires:
+#   - somepkg>=1.2
+# ---
+
+schema_version: 1
+name: example-tool
+title: Example Tool (Template)
+summary: Template manifest illustrating supported fields for Toolipie tools.
+default_glob: "*.ext"
+entry: toolipie.tools.example_tool.run:run
+options:
+  - name: flag
+    type: bool
+    default: false
+    help: Toggle a feature on or off.
+  - name: count
+    type: int
+    default: 1
+    help: Number of iterations.
+  - name: ratio
+    type: float
+    default: 0.5
+    help: A floating ratio value.
+  - name: mode
+    type: str
+    choices: [alpha, beta, gamma]
+    default: alpha
+    help: Select an operating mode.
+requires: []
