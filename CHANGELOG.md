@@ -6,7 +6,21 @@ The platform is versioned with Semantic Versioning (MAJOR.MINOR.PATCH). Tool-onl
 
 ## [Unreleased]
 
-- No changes yet.
+### Added
+- New `png-to-svg` plugin that wraps PNG images into simple SVGs with base64‑embedded data URIs (useful for embedding).
+- Document currently available shipped plugins (`png-to-avif`, `png-to-svg`). These are provided primarily for plugin testing and work like regular tools.
+
+### Fixed
+- `md-to-docx`: Properly handle `---` used as horizontal rules when no YAML front matter is present.
+- `md-to-pdf`: Same `---` handling; no failure when documents do not include YAML metadata.
+
+## [0.2.1] - 2025-09-26
+
+### Added
+- `png-to-svg` plugin (PNG → SVG wrapper with embedded base64 image).
+
+### Fixed
+- `md-to-docx` and `md-to-pdf`: tolerate `---` as horizontal rules when no YAML front matter exists.
 
 ## [0.2.0] - 2025-09-13
 
@@ -34,6 +48,7 @@ The platform is versioned with Semantic Versioning (MAJOR.MINOR.PATCH). Tool-onl
 ## [0.1.0] - 2025-09-04
 - Initial public release of the platform and first tools
 
-[Unreleased]: https://github.com/SimonBear03/toolipie-public/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/SimonBear03/toolipie-public/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/SimonBear03/toolipie-public/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/SimonBear03/toolipie-public/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/SimonBear03/toolipie-public/releases/tag/v0.1.0

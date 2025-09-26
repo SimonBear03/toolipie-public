@@ -78,6 +78,7 @@ When platform behavior changes, review and update these records in the repo:
 - The in-repo folder `src/toolipie/plugins/` holds plugin-style tools, whether shipped or installed.
 - `toolipie scan` indexes both `src/toolipie/tools/` and `src/toolipie/plugins/` into a single repo index at `.toolipie/index.json`. Entries carry `source: core|plugin` and a `rel_path` relative to their root.
 - `toolipie install <zip>` extracts into `src/toolipie/plugins/<tool>/` and updates `.toolipie/index.json`. `toolipie uninstall <tool>` removes the folder and rescans. No `~/.toolipie` is used.
+- Shipped plugins include `png-to-avif` (PNG → AVIF) and `png-to-svg` (PNG → SVG wrapper). These are provided primarily for plugin testing and they work like regular tools.
 
 ## Core vs Plugin Tools — When to choose which
 

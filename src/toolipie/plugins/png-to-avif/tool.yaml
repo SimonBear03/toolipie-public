@@ -1,0 +1,31 @@
+schema_version: 1
+name: png-to-avif
+title: "PNG \u2192 AVIF"
+summary: Convert PNG images to AVIF using Pillow's AVIF plugin.
+default_glob: '*.[pP][nN][gG]'
+entry: run.py:run
+options:
+- name: quality
+  type: int
+  default: 45
+  help: Quality for lossy encoding (0-100). Ignored when lossless=true.
+- name: lossless
+  type: bool
+  default: false
+  help: Enable lossless AVIF encoding.
+- name: speed
+  type: int
+  default: 6
+  help: Encoder speed 0 (slow/better) to 10 (fast).
+- name: subsampling
+  type: str
+  default: '4:2:0'
+  choices:
+  - '4:4:4'
+  - '4:2:2'
+  - '4:2:0'
+  - auto
+  help: Chroma subsampling mode. Use auto to let the encoder decide.
+requires:
+- pillow-avif-plugin>=1.4,<2
+- Pillow>=10,<11

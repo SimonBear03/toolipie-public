@@ -109,6 +109,11 @@ def _draw_menu(
         stdscr.addstr(dy, right_x, _truncate(sel_tool.get('title', ''), detail_w))
         stdscr.attroff(curses.A_BOLD)
         dy += 1
+        source = (sel_tool.get('source') or '').lower()
+        if source in {"core", "plugin"} and dy < help_y:
+            label = "(Core)" if source == "core" else "(Plugin)"
+            stdscr.addstr(dy, right_x, _truncate(label, detail_w), curses.A_DIM)
+            dy += 1
         # Description wrapped
         desc = sel_tool.get('desc', '') or ''
         for line in textwrap.wrap(desc, width=detail_w):
@@ -412,6 +417,9 @@ def launch_options_panel(
                     spec = specs[idx - 3]
                     name = spec["name"]
                     kind = spec.get("kind")
+                    if kind == "tri":
+                        # Booleans are toggled via Left/Right only
+                        continue
                     base_val = values.get(name)
                     if base_val is None:
                         base_val = effective.get(name)
@@ -496,9 +504,14 @@ class _CaptureWriter:
         self.q = q
         self._buf = ""
 
-    def write(self, s: str) -> int:
+    def write(self, s: str | bytes) -> int:
         if not s:
             return 0
+        if isinstance(s, bytes):
+            try:
+                s = s.decode("utf-8")
+            except Exception:
+                s = s.decode("utf-8", errors="replace")
         s = s.replace("\r", "\n")
         s = _strip_ansi(s)
         self._buf += s

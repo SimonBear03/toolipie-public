@@ -45,8 +45,20 @@ def run(ctx: Context, template: Optional[str] = None) -> None:
                         str(md), "docx", extra_args=args, outputfile=str(out_path)
                     )
                     status = "ok"
-                except Exception:
-                    status = "error"
+                except Exception as exc:
+                    # Fallback: if pandoc chokes on YAML front matter, retry using a
+                    # markdown reader that ignores YAML blocks (commonmark).
+                    err_text = str(exc).lower()
+                    try:
+                        if ("yaml" in err_text and "metadata" in err_text) or ("yaml" in err_text and "parse" in err_text):
+                            pypandoc.convert_file(
+                                str(md), "docx", format="commonmark", extra_args=args, outputfile=str(out_path)
+                            )
+                            status = "ok"
+                        else:
+                            status = "error"
+                    except Exception:
+                        status = "error"
             append_run_log(
                 ctx.run_log,
                 {

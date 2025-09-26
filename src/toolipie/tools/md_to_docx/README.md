@@ -60,3 +60,4 @@ toolipie run md-to-docx \
 
 - No LaTeX is required for DOCX output.
 - If auto-download is blocked (offline/CI), install Pandoc manually or set `PANDOC_PATH`.
+ - `---` used as horizontal rules is supported even without YAML front matter; front matter is only parsed when a valid metadata block is present.

@@ -55,3 +55,4 @@ toolipie run md-to-pdf \
 
 - No external Pandoc/LaTeX required for PDF generation.
 - Fonts/styles depend on WeasyPrint CSS support. Use web-safe fonts or ensure fonts are available.
+ - `---` used as horizontal rules is supported even without YAML front matter; front matter is only parsed when a valid metadata block is present.

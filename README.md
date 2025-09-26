@@ -68,6 +68,9 @@ toolipie run pdf-to-png \
   --output output/pdf-to-png \
   --param dpi=300
 
+# dependencies for a tool
+toolipie deps png-to-avif
+
 # Help overview
 toolipie --help
 ```
@@ -101,14 +104,19 @@ Common workflows:
 Security and safety notes:
 - The installer validates manifests, prevents Zip Slip, and does not import plugin code during discovery. Only the index is used at startup; code is loaded lazily at run time.
 
-Example plugin for local testing:
-- A sample plugin that mirrors `pdf-to-png` is provided at `src/toolipie/plugins/pdf_to_png_plugin/`.
-- From the repo root, create a zip and install it:
-  ```bash
-  zip -r pdf-to-png-plugin.zip src/toolipie/plugins/pdf_to_png_plugin
-  toolipie install pdf-to-png-plugin.zip
-  toolipie list
-  ```
+Shipped plugins in this repo:
+- `png-to-avif` (PNG → AVIF) at `src/toolipie/plugins/png-to-avif/`
+- `png-to-svg` (PNG → SVG wrapper with base64 data URI) at `src/toolipie/plugins/png-to-svg/`
+
+Note: Shipped plugins are provided primarily for plugin testing and they work like regular tools.
+
+From the repo root, you can package and reinstall either plugin for testing:
+```bash
+toolipie package png-to-avif --dest output/packages
+toolipie package png-to-svg --dest output/packages
+toolipie install output/packages/png-to-avif-<timestamp>.zip
+toolipie install output/packages/png-to-svg-<timestamp>.zip
+```
 
 
 TUI basics:

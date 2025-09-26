@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
+import logging
 from markdown_it import MarkdownIt
 from rich.progress import BarColumn, Progress, TextColumn, TimeElapsedColumn
 from weasyprint import CSS, HTML
@@ -51,6 +52,11 @@ def resolve_css(css: Optional[str], preset: Optional[str]) -> list[CSS]:
 def run(ctx: Context, preset: Optional[str] = None, css: Optional[str] = None) -> None:
     out_dir = ctx.output_dir
     out_dir.mkdir(parents=True, exist_ok=True)
+    # Suppress noisy fontTools warnings about legacy fonts to keep output clean
+    try:
+        logging.getLogger("fontTools").setLevel(logging.ERROR)
+    except Exception:
+        pass
     styles = resolve_css(css, preset)
 
     with Progress(

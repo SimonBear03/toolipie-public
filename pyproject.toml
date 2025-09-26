@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "toolipie"
-version = "0.2.0"
-description = "Toolipie — personal CLI toolbox (Markdown to DOCX/PDF via Pandoc)"
+version = "0.2.1"
+description = "Toolipie — personal CLI toolbox (Markdown → DOCX via Pandoc; Markdown → PDF via WeasyPrint)"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -17,6 +17,7 @@ dependencies = [
   "markdown-it-py>=3,<5",
   "weasyprint>=61,<63",
   "Pillow>=10,<11",
+  "pillow-avif-plugin>=1.4,<2",
   "pypdfium2>=4,<5",
   "opencv-python-headless>=4.10,<5",
 ]

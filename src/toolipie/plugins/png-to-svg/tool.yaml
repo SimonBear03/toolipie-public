@@ -1,0 +1,19 @@
+schema_version: 1
+name: png-to-svg
+title: "PNG \u2192 SVG"
+summary: Embed PNG images into simple SVG wrappers with a base64 data URI.
+default_glob: '*.[pP][nN][gG]'
+entry: run.py:run
+options:
+- name: aspect_ratio
+  type: str
+  default: xMidYMid meet
+  choices:
+  - xMidYMid meet
+  - xMidYMid slice
+  - xMinYMin meet
+  - xMaxYMax meet
+  - none
+  help: Value for the SVG preserveAspectRatio attribute.
+requires:
+- Pillow>=10,<11

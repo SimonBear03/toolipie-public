@@ -136,10 +136,14 @@ def discover_tools() -> list[dict[str, str]]:
     tools: list[dict[str, str]] = []
     for t in idx.get("tools", []) if isinstance(idx, dict) else []:
         try:
+            key = str(t["key"])
+            title = str(t.get("title") or key).strip()
+            source = str(t.get("source", "")).strip()
             tools.append({
-                "key": str(t["key"]),
-                "title": str(t.get("title") or t["key"]).strip(),
+                "key": key,
+                "title": title,
                 "desc": str(t.get("summary", "")),
+                "source": source,
             })
         except Exception:
             continue

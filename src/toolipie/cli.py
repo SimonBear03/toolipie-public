@@ -3,6 +3,9 @@ from __future__ import annotations
 from typing import Optional
 from pathlib import Path
 import sys
+import subprocess
+import re
+from importlib import metadata as importlib_metadata
 from typer import Context as TyperContext
 
 import typer
@@ -92,6 +95,11 @@ def main(
                 {"key": "scan", "title": "Scan Registry", "desc": "Rebuild .toolipie/index.json"},
                 {"key": "validate", "title": "Validate Index & Manifests", "desc": "Check manifests and registry structure"},
                 {"key": "list", "title": "List Tools", "desc": "Print registered tools"},
+                {
+                    "key": "deps",
+                    "title": "Show Dependencies",
+                    "desc": "Print pip install command for tool requirements",
+                },
                 {"key": "install", "title": "Install Plugin", "desc": "Enter a .zip path to install"},
                 {"key": "uninstall", "title": "Uninstall Plugin", "desc": "Remove a plugin tool"},
                 {"key": "package", "title": "Package Tool", "desc": "Create a distributable .zip from a tool"},
@@ -161,6 +169,39 @@ def main(
                                 desc = f": {t['desc']}" if t.get("desc") else ""
                                 print(f"{t['key']}{title}{desc}")
                         launch_output_panel("List Tools", do_list)
+                    elif sys_sel == "deps":
+                        tool_key = launch_text_prompt(
+                            "Tool Dependencies",
+                            "Tool key (leave blank for all): ",
+                            "",
+                        )
+                        if tool_key is None:
+                            continue
+                        tool_key = tool_key.strip() or None
+
+                        def do_deps() -> None:
+                            try:
+                                deps_order, dep_map, tool_keys = _collect_dependencies_info(tool_key)
+                            except ValueError as exc:
+                                print(str(exc))
+                                return
+                            if not deps_order:
+                                if tool_key:
+                                    print(f"'{tool_key}' does not declare extra dependencies.")
+                                else:
+                                    print("No tools declare extra dependencies.")
+                                return
+                            if tool_key:
+                                print(f"Dependencies for {tool_key}:")
+                            else:
+                                print("Dependencies across tools: " + ", ".join(tool_keys))
+                            print("\n    pip install " + " ".join(deps_order) + "\n")
+                            print("Details:")
+                            for dep in deps_order:
+                                owners = ", ".join(dep_map.get(dep, []))
+                                print(f"  - {dep} (required by {owners})")
+
+                        launch_output_panel("Tool Dependencies", do_deps)
                     elif sys_sel == "install":
                         zip_path = launch_text_prompt("Install Plugin", "Zip file path: ", "")
                         if not zip_path:
@@ -317,7 +358,10 @@ def main(
         if vals.get("workers") is not None:
             add_flag("workers", vals.get("workers"))
         if vals.get("overwrite") is not None:
-            add_flag("overwrite", "true" if bool(vals.get("overwrite")) else "false")
+            if bool(vals.get("overwrite")):
+                argv.append("--overwrite")
+            else:
+                argv.append("--no-overwrite")
         # tool-specific params: pass via --param key=value
         CORE = {"input", "output", "glob", "overwrite", "workers"}
         for k, v in (vals or {}).items():
@@ -446,6 +490,39 @@ def list_tools() -> None:
         typer.echo(f"{t['key']}{title}{desc}")
 
 
+@app.command("deps")
+def deps(
+    tool: Optional[str] = typer.Argument(
+        None,
+        help="Tool key (kebab-case). Leave blank to aggregate all tools in the registry.",
+    ),
+) -> None:
+    """Print a pip install command for the dependencies declared by tool manifests."""
+    try:
+        ordered, dep_map, tool_keys = _collect_dependencies_info(tool)
+    except ValueError as exc:
+        typer.secho(str(exc), err=True, fg=typer.colors.RED)
+        raise typer.Exit(code=1)
+
+    if not ordered:
+        if tool:
+            typer.echo(f"'{tool}' does not declare extra dependencies.")
+        else:
+            typer.echo("No tools declare extra dependencies.")
+        return
+
+    if tool:
+        header = f"Dependencies for {tool}:"
+    else:
+        header = "Dependencies across tools: " + ", ".join(tool_keys)
+    typer.echo(header)
+    typer.echo("\n    pip install " + " ".join(ordered) + "\n")
+    typer.echo("Details:")
+    for dep in ordered:
+        owners = ", ".join(dep_map.get(dep, []))
+        typer.echo(f"  - {dep} (required by {owners})")
+
+
 @app.command("package")
 def package(
     tool: str = typer.Argument(..., help="Tool key (kebab-case) to package"),
@@ -525,6 +602,56 @@ def _parse_params(param_items: list[str], tool_key: str) -> dict:
                     f"Invalid value for {key}: '{out[key]}'. Choices: {opt['choices']}"
                 )
     return out
+
+
+def _collect_dependencies_info(
+    tool_key: Optional[str],
+) -> tuple[list[str], dict[str, list[str]], list[str]]:
+    """Return ordered dependency list, mapping to tool keys, and the involved tools."""
+    idx = load_index() or {}
+    records = []
+    if isinstance(idx, dict):
+        for rec in idx.get("tools", []) or []:
+            try:
+                key = str(rec.get("key"))
+            except Exception:
+                continue
+            if tool_key is not None:
+                if key == tool_key:
+                    records.append(rec)
+                    break
+            else:
+                records.append(rec)
+    if tool_key is not None and not records:
+        raise ValueError(f"Tool '{tool_key}' is missing from the registry. Run `toolipie scan`.")
+    if not records:
+        raise ValueError("No tools registered. Run `toolipie scan` first.")
+
+    ordered_deps: list[str] = []
+    dep_map: dict[str, set[str]] = {}
+    seen: set[str] = set()
+    tool_keys: list[str] = []
+
+    for rec in records:
+        try:
+            key = str(rec.get("key"))
+        except Exception:
+            continue
+        tool_keys.append(key)
+        requires = rec.get("requires") or []
+        if not isinstance(requires, list):
+            continue
+        for dep in requires:
+            dep_str = str(dep).strip()
+            if not dep_str:
+                continue
+            dep_map.setdefault(dep_str, set()).add(key)
+            if dep_str not in seen:
+                seen.add(dep_str)
+                ordered_deps.append(dep_str)
+
+    dep_list_map = {dep: sorted(dep_map.get(dep, [])) for dep in ordered_deps}
+    return ordered_deps, dep_list_map, tool_keys
 
 
 @app.command("run")
@@ -798,11 +925,60 @@ def install(
                     # Zip Slip attempt — skip
                     continue
                 target.parent.mkdir(parents=True, exist_ok=True)
-                with zf.open(n) as src, open(target, "wb") as out:
-                    shutil.copyfileobj(src, out)
+                with zf.open(n) as src:
+                    data = src.read()
+                if isinstance(data, str):
+                    data = data.encode("utf-8")
+                with open(target, "wb") as out:
+                    out.write(data)
         # Rebuild unified index to include the new plugin
         scan_all_and_write_index()
         typer.secho(f"Installed '{tool_key}' to {dest}", fg=typer.colors.GREEN)
+        try:
+            deps_order, _dep_map, _tool_keys = _collect_dependencies_info(tool_key)
+        except ValueError:
+            deps_order = []
+
+        def _extract_req_name(req: str) -> str:
+            trimmed = req.split(";", 1)[0].strip()
+            trimmed = trimmed.split("[", 1)[0].strip()
+            base = re.split(r"[<>=!~\s]", trimmed, maxsplit=1)[0]
+            return base.strip()
+
+        def _is_installed(pkg: str) -> bool:
+            if not pkg:
+                return False
+            try:
+                importlib_metadata.distribution(pkg)
+                return True
+            except importlib_metadata.PackageNotFoundError:
+                return False
+            except Exception:
+                return False
+
+        if deps_order:
+            missing: list[str] = []
+            for dep in deps_order:
+                base = _extract_req_name(dep)
+                if not _is_installed(base):
+                    missing.append(dep)
+            if missing:
+                miss_line = ", ".join(missing)
+                typer.secho(
+                    f"Missing dependencies: {miss_line}",
+                    fg=typer.colors.YELLOW,
+                )
+                typer.echo(f"Run: pip install {' '.join(missing)}")
+            else:
+                typer.secho(
+                    "All plugin dependencies already installed.",
+                    fg=typer.colors.GREEN,
+                )
+        else:
+            typer.secho(
+                "This plugin does not declare additional Python dependencies.",
+                fg=typer.colors.CYAN,
+            )
 
 
 @app.command("uninstall")

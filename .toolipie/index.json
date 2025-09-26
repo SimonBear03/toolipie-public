@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2025-09-13T01:50:45.105353+00:00",
+  "generated_at": "2025-09-26T16:08:47.758120+00:00",
   "tools": [
     {
       "key": "md-to-docx",
@@ -163,35 +163,76 @@
       "rel_path": "png_prep_ocr"
     },
     {
-      "key": "pdf-to-png-plugin",
-      "title": "PDF → PNG (Plugin)",
-      "summary": "Convert PDF pages to PNG images using PDFium (packaged as a plugin).",
-      "default_glob": "*.pdf",
+      "key": "png-to-avif",
+      "title": "PNG → AVIF",
+      "summary": "Convert PNG images to AVIF using Pillow's AVIF plugin.",
+      "default_glob": "*.[pP][nN][gG]",
       "entry": "run.py:run",
       "options": [
         {
-          "name": "dpi",
+          "name": "quality",
           "type": "int",
-          "default": 300,
-          "help": "Render DPI (dots per inch)."
+          "default": 45,
+          "help": "Quality for lossy encoding (0-100). Ignored when lossless=true."
         },
         {
-          "name": "first_page",
-          "type": "int",
-          "help": "First page to render (1-indexed)."
+          "name": "lossless",
+          "type": "bool",
+          "default": false,
+          "help": "Enable lossless AVIF encoding."
         },
         {
-          "name": "last_page",
+          "name": "speed",
           "type": "int",
-          "help": "Last page to render (inclusive)."
+          "default": 6,
+          "help": "Encoder speed 0 (slow/better) to 10 (fast)."
+        },
+        {
+          "name": "subsampling",
+          "type": "str",
+          "default": "4:2:0",
+          "choices": [
+            "4:4:4",
+            "4:2:2",
+            "4:2:0",
+            "auto"
+          ],
+          "help": "Chroma subsampling mode. Use auto to let the encoder decide."
         }
       ],
       "requires": [
-        "pypdfium2>=4,<5",
+        "pillow-avif-plugin>=1.4,<2",
         "Pillow>=10,<11"
       ],
       "source": "plugin",
-      "rel_path": "pdf-to-png-plugin"
+      "rel_path": "png-to-avif"
+    },
+    {
+      "key": "png-to-svg",
+      "title": "PNG → SVG",
+      "summary": "Embed PNG images into simple SVG wrappers with a base64 data URI.",
+      "default_glob": "*.[pP][nN][gG]",
+      "entry": "run.py:run",
+      "options": [
+        {
+          "name": "aspect_ratio",
+          "type": "str",
+          "default": "xMidYMid meet",
+          "choices": [
+            "xMidYMid meet",
+            "xMidYMid slice",
+            "xMinYMin meet",
+            "xMaxYMax meet",
+            "none"
+          ],
+          "help": "Value for the SVG preserveAspectRatio attribute."
+        }
+      ],
+      "requires": [
+        "Pillow>=10,<11"
+      ],
+      "source": "plugin",
+      "rel_path": "png-to-svg"
     }
   ]
 }
